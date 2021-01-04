@@ -1,0 +1,253 @@
+/* CSS Document */
+/* web ini dibuat pada tanggal 13 Agustus Di Metro */
+/* untuk syarat kelulusan D3 MI UMMetro, sukses kawan, amin */ 
+
+body {
+    font-family:"Century Gothic";
+    font-size:12px;
+    background-color:#eee;
+    padding:0px;
+    margin:0px;
+}
+.header{
+    background-color:#4ce600;
+    padding:10px;
+    color:#0066ff;
+    border-bottom:4px solid #0066ff;
+}
+.header>.container>h1{
+    margin:0;
+}
+.logo{
+    float:left;
+    height:80px;
+}
+
+.alamat{
+    color:#fff;
+}
+
+.menu-kiri{
+    background-color:#fff;
+    padding:10px;
+    float:left;
+    width:170px;
+    margin-top:5px;
+    margin-right:5px;
+    margin-bottom:5px;
+    border-bottom:2px solid #4ce600;
+}
+.menu-kiri-isi>li{
+    list-style:none;
+    margin-top:5px;
+    margin-bottom:5px;
+    border-bottom:1px dotted #CCC;
+    padding-bottom:5px;
+    padding-top:5px;
+    padding-left:5px;
+}
+.menu-kiri-isi>li>a{
+    text-decoration:none;
+    color:#333;
+}
+.menu-kiri-title{
+    padding:5px;
+    background-color:#4ce600;
+    color:#fff;
+    border-bottom:2px solid #0066ff;
+}
+.menu-kiri-isi{
+    padding:5px;
+    margin-bottom:20px;
+    border-bottom:1px;
+    background-color:#eee;
+    padding-bottom:10px;
+}
+.menu-kiri-isi input[type="text"], input[type="password"]{
+    padding:3px;
+    margin:3px;
+    width:143px;
+}
+.menu-kiri-isi input[type="button"]{
+    width:75px;
+    background-color:#4ce600;
+    float:right;
+    color:#fff;
+    border:1px solid #eee;
+    margin-right:5px;
+    margin-top:5px;
+}
+.login>.main>form>input[type=button] {
+    border:1px solid #eee;
+    width:70px;
+    color:#FFF;
+    background-color:#0066ff;
+    margin:auto;
+}
+.isi{
+    float:left;
+    width:780px;
+    margin:5px;
+    border-bottom:2px solid #0066ff;
+}
+.login{
+    width:200px;
+    margin:auto;
+    border-bottom:2px solid #0066ff;
+}
+.login>.main>form>input[type=text]{
+    padding:5px;
+    border:1px solid #eee;
+    width:100%;
+    margin-bottom:2px;
+}
+.login>.main>form>input[type=password] {
+    width:100%;
+    padding:5px;
+    border:1px solid #eee;
+    margin:0;
+}
+.judul-web{
+    padding:9px;
+    background-color:#0066ff;
+    color:#fff;
+    font-size:17px;
+    border-bottom:3px solid #DDD;
+}
+.main{
+    padding:9px;
+    background-color:#fff;
+    border:1px solid #eee;
+    margin-bottom:5px;
+}
+.container{
+    padding:5px;
+    width:1000px;
+    margin:auto;
+}
+.clear{
+    clear:both;
+    float:none;
+}
+
+.penampil-gambar{
+    padding:3px;
+    border:1px solid #ccc;
+}
+table {
+    border-color:#ddd;
+}
+tr {
+    border:1px solid #ddd;
+}
+td{
+    border:1px solid #ddd;
+    padding:5px;
+}
+.judul-tabel{
+    background-color:#eee;
+    text-align:center;
+    font-weight:bold;
+}
+.navigator{
+    border:1px solid #eee;
+    padding:5px;
+    background-color:#fff;
+}
+.tombolnext{
+    padding:3px;
+    background-color:#eee;
+    float:right;
+}
+.tombolnext>a{
+    text-decoration:none;
+    color:#333;
+}
+.tombolprev{
+    padding:3px;
+    background-color:#eee;
+    float:left;
+}
+.tombolprev>a{
+    text-decoration:none;
+    color:#333;
+}
+.input-daftar{
+    padding:5px;
+    margin:5px;
+    border:1px solid #ddd;
+    float:left;
+    width:60%;
+}
+.input-identitas{
+    padding:5px;
+}
+.input-label{
+    padding:5px;
+    float:left;
+    width:200px;
+}
+.input-selek{
+    padding:5px;
+    margin:5px;
+}
+.input-nilai{
+    padding:5px;
+    margin:5px;
+    width:40px;
+}
+.tes{
+    padding:5px;
+    margin:5px;
+    width:300px;
+    float:left;
+}
+.btn{
+    padding:5px;
+    margin:5px;
+    border:none;
+    border-bottom:1px solid #4ce600;
+    background-color:#eee;
+    width:100px;
+    color:#333;
+    cursor:pointer;
+}
+.btn-home {
+    background-color:#FFF
+}
+.reset{
+    background:#b52d43;
+    color:#fff;
+}
+.diterima{
+    background:#6F9;
+    color:#000;
+    text-transform:capitalize;
+}
+.menunggu{
+    background:#EE0D34;
+    color:#fff;
+    text-transform:capitalize;
+    padding:5px;
+}
+.judul-web>a{
+    text-decoration:none;
+    color:#fff;
+}
+.keterangan-pengumuman{
+    margin:5px;
+    margin-left:0;
+    font-size:10px;
+}
+.total-data{
+    padding:5px;
+    width:200px;
+    margin:auto;
+}
+.kaki{
+    padding:5px;
+    background-color:#4ce600;
+    border-top:4px solid #0066ff;
+    color:#fff;
+    text-align:center;
+}
