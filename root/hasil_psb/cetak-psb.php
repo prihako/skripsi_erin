@@ -212,13 +212,13 @@ ob_start();
 							GetSQLValueString($row_index['id_siswa'], "int"));
 					$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
 
-					$isLulus = true;
+					$isLulus = false;
 					while ($row_hasil_test = mysql_fetch_array($result_hasil_test)) {
 						if($row_hasil_test['nilai'] < $row_hasil_test['nilai_minimum']){
 							$isLulus = false;
 							break;
 						}
-						
+						$isLulus = true;
 					}
 					
 					if($isLulus == true){
