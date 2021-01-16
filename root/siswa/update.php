@@ -1,7 +1,6 @@
 
 <?php
 include "../Connections/dropdown_helper.php";
-include "../Connections/GetSQLValueString.php";
 include "../Connections/image_display_helper.php";
 require_once('../Connections/disable_cache.php');
 
@@ -13,8 +12,6 @@ if (isset($_SERVER['QUERY_STRING'])) {
 }
 
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
-    
-    mysql_select_db($database_db, $alijtihad_db);
         
     $updateSQL = sprintf("UPDATE siswa SET "
             . "username=%s, "
@@ -53,7 +50,7 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
             GetSQLValueString($_POST['id_siswa'], "int")
         );
     
-    $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+    $Result1 = mysqli_query($alijtihad_db, $updateSQL);
     
     $updateBapakSQL = sprintf("UPDATE orang_tua SET "
             . "nama=%s, "
@@ -82,7 +79,7 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
             GetSQLValueString($_POST['id_bapak'], "int")
         );
     
-    $result_update_bapak = mysql_query($updateBapakSQL, $alijtihad_db) or die(mysql_error());
+    $result_update_bapak = mysqli_query($alijtihad_db, $updateBapakSQL);
     
     $updateIbuSQL = sprintf("UPDATE orang_tua SET "
             . "nama=%s, "
@@ -111,14 +108,14 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
             GetSQLValueString($_POST['id_ibu'], "int")
         );
     
-    $result_update_bapak = mysql_query($updateIbuSQL, $alijtihad_db) or die(mysql_error());
+    $result_update_bapak = mysql_query($alijtihad_db, $updateIbuSQL);
 
-    $updateGoTo = "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php";
+    $updateGoTo = get_base_url() . "/al-ijtihad/root/index.php";
     if (isset($_SERVER['QUERY_STRING'])) {
         $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
         $updateGoTo .= $_SERVER['QUERY_STRING'];
     }
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=siswa"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=siswa"));
 }
 
 $colname_update = "-1";
@@ -139,9 +136,9 @@ $query_update = sprintf("SELECT s.*,p.*, "
         . "and ot1.tipe_orang_tua = '1' left join orang_tua ot2 on s.id_siswa = ot2.id_siswa and "
         . "ot2.tipe_orang_tua = '2' where s.username = %s", 
         GetSQLValueString($colname_update, "text"));
-$update = mysql_query($query_update, $alijtihad_db) or die(mysql_error());
-$row_update = mysql_fetch_assoc($update);
-$totalRows_update = mysql_num_rows($update);
+$update = mysqli_query($alijtihad_db, $query_update);
+$row_update = mysqli_fetch_assoc($update);
+$totalRows_update = mysqli_num_rows($update);
 ?>
 
 <form method="post" name="form1" action="<?php echo $editFormAction; ?>">
@@ -448,5 +445,5 @@ $totalRows_update = mysql_num_rows($update);
 </form>
 <p>&nbsp;</p>
 <?php
-mysql_free_result($update);
+mysqli_free_result($update);
 ?>

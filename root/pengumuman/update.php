@@ -1,35 +1,5 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
 
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
@@ -39,21 +9,19 @@ if (isset($_SERVER['QUERY_STRING'])) {
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
     $updateSQL = sprintf("UPDATE pengumuman SET judul_pengumuman=%s, isi_pengumuman=%s, tanggal_pengumuman=%s WHERE id_pengumuman=%s", GetSQLValueString($_POST['judul_pengumuman'], "text"), GetSQLValueString($_POST['isi_pengumuman'], "text"), GetSQLValueString($_POST['tanggal_pengumuman'], "date"), GetSQLValueString($_POST['id_pengumuman'], "int"));
 
-    mysql_select_db($database_db, $alijtihad_db);
-    $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+    $Result1 = mysqli_query($alijtihad_db, $updateSQL);
 
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=pengumuman"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=pengumuman"));
 }
 
 $colname_halaman_update = "-1";
 if (isset($_GET['id_pengumuman'])) {
     $colname_halaman_update = $_GET['id_pengumuman'];
 }
-mysql_select_db($database_db, $alijtihad_db);
 $query_halaman_update = sprintf("SELECT * FROM pengumuman WHERE id_pengumuman = %s", GetSQLValueString($colname_halaman_update, "int"));
-$halaman_update = mysql_query($query_halaman_update, $alijtihad_db) or die(mysql_error());
-$row_halaman_update = mysql_fetch_assoc($halaman_update);
-$totalRows_halaman_update = mysql_num_rows($halaman_update);
+$halaman_update = mysqli_query($alijtihad_db, $query_halaman_update);
+$row_halaman_update = mysqli_fetch_assoc($halaman_update);
+$totalRows_halaman_update = mysqli_num_rows($halaman_update);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -93,5 +61,5 @@ $totalRows_halaman_update = mysql_num_rows($halaman_update);
     </body>
 </html>
 <?php
-mysql_free_result($halaman_update);
+mysqli_free_result($halaman_update);
 ?>

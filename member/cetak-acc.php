@@ -1,9 +1,10 @@
-<?php require_once('../Connections/database_db.php'); ?>
-
-<?php
+<?php 
 if (!isset($_SESSION)) {
   session_start();
 }
+require_once('../Connections/database_db.php'); 
+require_once('../Connections/url_helper.php'); 
+
 $MM_authorizedUsers = "";
 $MM_donotCheckaccess = "true";
 
@@ -33,7 +34,7 @@ function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) {
   return $isValid; 
 }
 
-$MM_restrictGoTo = "http://localhost/al-ijtihad/index.php";
+$MM_restrictGoTo = get_base_url() . "/al-ijtihad/index.php";
 if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
   $MM_qsChar = "?";
   $MM_referrer = $_SERVER['PHP_SELF'];
@@ -46,37 +47,6 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
-
 
 $colname_test = "-1";
 if (isset($_SESSION['MM_Username'])) {
@@ -84,33 +54,28 @@ if (isset($_SESSION['MM_Username'])) {
 }
 
 ob_start(); 
-mysql_select_db($database_db, $alijtihad_db);
 $query_panggilan = sprintf("SELECT * FROM siswa WHERE username = %s", GetSQLValueString($colname_test, "text"));
-$panggilan = mysql_query($query_panggilan, $alijtihad_db) or die(mysql_error());
-$row_panggilan = mysql_fetch_assoc($panggilan);
-$totalRows_panggilan = mysql_num_rows($panggilan);
+$panggilan = mysqli_query($alijtihad_db, $query_panggilan);
+$row_panggilan = mysqli_fetch_assoc($panggilan);
+$totalRows_panggilan = mysqli_num_rows($panggilan);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_cetak = sprintf("SELECT * FROM siswa WHERE username = %s", GetSQLValueString($colname_test, "text"));
-$cetak = mysql_query($query_cetak, $alijtihad_db) or die(mysql_error());
-$row_cetak = mysql_fetch_assoc($cetak);
-$totalRows_cetak = mysql_num_rows($cetak);
+$cetak = mysqli_query($alijtihad_db, $query_cetak);
+$row_cetak = mysqli_fetch_assoc($cetak);
+$totalRows_cetak = mysqli_num_rows($cetak);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_nilai = sprintf("SELECT * FROM siswa,nilai,tes WHERE siswa.username=nilai.username AND siswa.username=tes.username AND siswa.username = %s AND status=1", GetSQLValueString($colname_test, "text"));
-$nilai = mysql_query($query_nilai, $alijtihad_db) or die(mysql_error());
-$row_nilai = mysql_fetch_assoc($nilai);
-$totalRows_nilai = mysql_num_rows($nilai);
+$nilai = mysqli_query($alijtihad_db, $query_nilai);
+$row_nilai = mysqli_fetch_assoc($nilai);
+$totalRows_nilai = mysqli_num_rows($nilai);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_waktu = sprintf("SELECT * FROM waktutest");
-$waktu = mysql_query($query_waktu, $alijtihad_db) or die(mysql_error());
-$row_waktu = mysql_fetch_assoc($waktu);
+$waktu = mysqli_query($alijtihad_db, $query_waktu);
+$row_waktu = mysqli_fetch_assoc($waktu);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_admin = sprintf("SELECT * FROM admin");
-$admin = mysql_query($query_admin, $alijtihad_db) or die(mysql_error());
-$row_admin = mysql_fetch_assoc($admin);
+$admin = mysqli_query($alijtihad_db, $query_admin);
+$row_admin = mysqli_fetch_assoc($admin);
 
  ?>
 <?php   
@@ -263,7 +228,7 @@ $content = '<page style="font-family: freeserif">'.nl2br($content).'</page>';
   $html2pdf->Output($filename);  
  }  
  catch(HTML2PDF_exception $e) { echo $e; }  
-?> <?php mysql_free_result($cetak);
+?> <?php mysqli_free_result($cetak);
 
-mysql_free_result($panggilan);
+mysqli_free_result($panggilan);
 ?>

@@ -1,9 +1,10 @@
-
 <?php
 //initialize the session
 if (!isset($_SESSION)) {
     session_start();
 }
+
+require_once('Connections/get_sql_value.php');
 
 // ** Logout the current user. **
 $logoutAction = $_SERVER['PHP_SELF'] . "?doLogout=true";
@@ -28,9 +29,7 @@ if ((isset($_GET['doLogout'])) && ($_GET['doLogout'] == "true")) {
 }
 ?>
 <?php
-if (!isset($_SESSION)) {
-    session_start();
-}
+
 $MM_authorizedUsers = "";
 $MM_donotCheckaccess = "true";
 
@@ -74,43 +73,11 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("", $MM_authorizedUsers
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $colname_test = "-1";
 if (isset($_SESSION['MM_Username'])) {
     $colname_test = $_SESSION['MM_Username'];
 }
-mysql_select_db($database_db, $alijtihad_db);
 $query_test = sprintf("SELECT "
         . "s.username, "
         . "s.foto, "
@@ -132,9 +99,9 @@ $query_test = sprintf("SELECT "
         . "left join orang_tua ot2 "
         . "on s.id_siswa = ot2.id_siswa and ot2.tipe_orang_tua = '2' "
         . "where s.username =%s ", GetSQLValueString($colname_test, "text"));
-$test = mysql_query($query_test, $alijtihad_db) or die(mysql_error());
-$row_test = mysql_fetch_assoc($test);
-$totalRows_test = mysql_num_rows($test);
+$test = mysqli_query($alijtihad_db, $query_test) or die(mysql_error());
+$row_test = mysqli_fetch_assoc($test);
+$totalRows_test = mysqli_num_rows($test);
 ?>
 <div class="isi">
 
@@ -190,5 +157,5 @@ $totalRows_test = mysql_num_rows($test);
 
 </div>
 <?php
-mysql_free_result($test);
+mysqli_free_result($test);
 ?>

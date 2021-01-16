@@ -1,6 +1,5 @@
 <?php
 include "../Connections/dropdown_helper.php";
-include "../Connections/GetSQLValueString.php";
 include "../Connections/image_display_helper.php";
 require_once('../Connections/disable_cache.php');
 
@@ -23,10 +22,10 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
             GetSQLValueString($selected, "int")
     );
 
-    $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+    $Result1 = mysqli_query($alijtihad_db, $updateSQL);
     }
 
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=verifikasi-berkas"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=verifikasi-berkas"));
 }
 
 $maxRows_index = 10;
@@ -41,16 +40,15 @@ if (isset($_GET['username'])) {
     $colname_update = $_GET['username'];
 }
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_index = "SELECT * from siswa s where s.status = '4' ";
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
+$index = mysqli_query($alijtihad_db, $query_limit_index);
 
 if (isset($_GET['totalRows_index'])) {
     $totalRows_index = $_GET['totalRows_index'];
 } else {
-    $all_index = mysql_query($query_index);
-    $totalRows_index = mysql_num_rows($all_index);
+    $all_index = mysqli_query($alijtihad_db, $query_index);
+    $totalRows_index = mysqli_num_rows($all_index);
 }
 $totalPages_index = ceil($totalRows_index / $maxRows_index) - 1;
 
@@ -89,7 +87,7 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
             <tbody>
                 <?php
                 $no = 1;
-                while ($row_index = mysql_fetch_assoc($index)) {
+                while ($row_index = mysqli_fetch_assoc($index)) {
                     ?>
                     <tr>
                         <td><?php echo $no ?> </a></td>
@@ -135,5 +133,5 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
 </form>
 <p>&nbsp;</p>
 <?php
-mysql_free_result($index);
+mysqli_free_result($index);
 ?>

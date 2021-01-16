@@ -1,10 +1,10 @@
 <?php
 
-error_reporting(0);
 require_once('Connections/database_db.php');
 include('Connections/function.php');
 require_once('Connections/log_to_file.php');
 require_once('Connections/disable_cache.php');
+require_once('Connections/get_sql_value.php');
 ?>
 <?php
 

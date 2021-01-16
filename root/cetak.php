@@ -1,35 +1,5 @@
 <?php require_once('../Connections/database_db.php'); ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
 
 $currentPage = $_SERVER["PHP_SELF"];
 
@@ -39,8 +9,6 @@ if (isset($_GET['pageNum_index'])) {
   $pageNum_index = $_GET['pageNum_index'];
 }
 $startRow_index = $pageNum_index * $maxRows_index;
-
-mysql_select_db($database_db, $alijtihad_db);
 
 $query_index = "SELECT s.*, "
         . "p_status.param_name as status_desc, "
@@ -52,14 +20,14 @@ $query_index = "SELECT s.*, "
         . "left join parameter p_jen_kel on s.jenis_kelamin = p_jen_kel.param_value and p_jen_kel.column_name = 'jenis_kelamin' ";
 		
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
-$row_index = mysql_fetch_assoc($index);
+$index = mysqli_query($alijtihad_db, $query_limit_index);
+$row_index = mysqli_fetch_assoc($index);
 
 if (isset($_GET['totalRows_index'])) {
   $totalRows_index = $_GET['totalRows_index'];
 } else {
-  $all_index = mysql_query($query_index);
-  $totalRows_index = mysql_num_rows($all_index);
+  $all_index = mysqli_query($alijtihad_db,$query_index);
+  $totalRows_index = mysqli_num_rows($all_index);
 }
 $totalPages_index = ceil($totalRows_index/$maxRows_index)-1;
 
@@ -127,5 +95,5 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
 </div>
 
 <?php
-mysql_free_result($index);
+mysqli_free_result($index);
 ?>

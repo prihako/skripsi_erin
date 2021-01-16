@@ -7,7 +7,7 @@ $colname_test = "-1";
 if (isset($_SESSION['MM_Username'])) {
     $colname_test = $_SESSION['MM_Username'];
 }
-mysql_select_db($database_db, $alijtihad_db);
+
 $query_test = sprintf("SELECT "
         . "s.id_siswa, "
         . "s.username, "
@@ -30,9 +30,9 @@ $query_test = sprintf("SELECT "
         . "left join orang_tua ot2 "
         . "on s.id_siswa = ot2.id_siswa and ot2.tipe_orang_tua = '2' "
         . "where s.username =%s ", GetSQLValueString($colname_test, "text"));
-$test = mysql_query($query_test, $alijtihad_db) or die(mysql_error());
-$row_test = mysql_fetch_assoc($test);
-$totalRows_test = mysql_num_rows($test);
+$test = mysqli_query($alijtihad_db, $query_test);
+$row_test = mysqli_fetch_assoc($test);
+$totalRows_test = mysqli_num_rows($test);
 
 ?>
 <div class="isi">
@@ -101,5 +101,5 @@ $totalRows_test = mysql_num_rows($test);
 
 </div>
 <?php
-mysql_free_result($test);
+mysqli_free_result($test);
 ?>

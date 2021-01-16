@@ -1,9 +1,12 @@
-<?php require_once('../../Connections/database_db.php'); ?>
-
-<?php
+<?php 
 if (!isset($_SESSION)) {
     session_start();
 }
+
+require_once('../../Connections/database_db.php');
+require_once('../../Connections/get_sql_value.php');
+require_once('../../Connections/url_helper.php');
+
 $MM_authorizedUsers = "";
 $MM_donotCheckaccess = "true";
 
@@ -33,7 +36,7 @@ function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) {
     return $isValid;
 }
 
-$MM_restrictGoTo = "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php";
+$MM_restrictGoTo = get_base_url() . "/al-ijtihad/index.php";
 if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("", $MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {
     $MM_qsChar = "?";
     $MM_referrer = $_SERVER['PHP_SELF'];
@@ -47,37 +50,6 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("", $MM_authorizedUsers
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 
 $colname_test = "-1";
@@ -90,7 +62,6 @@ $maxRows_index = 1000;
 $pageNum_index = 0;
 $startRow_index = $pageNum_index * $maxRows_index;
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_index = "SELECT s.*, "
         . "p_status.param_name as status_desc, "
         . "p_agama.param_name as agama_desc, "
@@ -102,11 +73,11 @@ $query_index = "SELECT s.*, "
         . "where "
         . "s.status = '5' ";
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
+$index = mysqli_query($alijtihad_db, $query_limit_index);
 
 
 $query_mata_pelajaran = "SELECT * from mata_pelajaran ";
-$result_mata_pelajaran = mysql_query($query_mata_pelajaran, $alijtihad_db) or die(mysql_error());
+$result_mata_pelajaran = mysqli_query($alijtihad_db, $query_mata_pelajaran);
 
 ?>
 <?php
@@ -139,7 +110,7 @@ ob_start();
         </tr>
 		<?php
 		$no = 1;
-		while ($row_index = mysql_fetch_array($index)) {
+		while ($row_index = mysqli_fetch_array($index)) {
 		?>
         <tr>
 			<td><?php echo $no ?></td>
@@ -193,8 +164,8 @@ ob_start();
 							. "and pelajaran.id_mata_pelajaran = test.id_mata_pelajaran "
 							. "and siswa.id_siswa = %s ",
 							GetSQLValueString($row_index['id_siswa'], "int"));
-					$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
-					while ($row_hasil_test = mysql_fetch_array($result_hasil_test)) {
+					$result_hasil_test = mysqli_query($alijtihad_db, $query_hasil_test) or die(mysqli_error($alijtihad_db));
+					while ($row_hasil_test = mysqli_fetch_array($result_hasil_test)) {
 						echo $row_hasil_test['nama_mata_pelajaran'] . " : " . $row_hasil_test['nilai'] . ", ";
 						echo "<br />";
 					}
@@ -210,10 +181,10 @@ ob_start();
 							. "and pelajaran.id_mata_pelajaran = test.id_mata_pelajaran "
 							. "and siswa.id_siswa = %s ",
 							GetSQLValueString($row_index['id_siswa'], "int"));
-					$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
+					$result_hasil_test = mysqli_query($alijtihad_db, $query_hasil_test);
 
 					$isLulus = false;
-					while ($row_hasil_test = mysql_fetch_array($result_hasil_test)) {
+					while ($row_hasil_test = mysqli_fetch_array($result_hasil_test)) {
 						if($row_hasil_test['nilai'] < $row_hasil_test['nilai_minimum']){
 							$isLulus = false;
 							break;
@@ -245,7 +216,7 @@ ob_start();
         </tr>
 		<?php
 		$no = 1;
-		while ($row_mata_pelajaran = mysql_fetch_array($result_mata_pelajaran)) {
+		while ($row_mata_pelajaran = mysqli_fetch_array($result_mata_pelajaran)) {
 		?>
         <tr>
 			<td><?php echo $no ?></td>
@@ -280,6 +251,6 @@ try {
 ?>
 
 <?php
-mysql_free_result($index);
-mysql_free_result($result_mata_pelajaran);
+mysqli_free_result($index);
+mysqli_free_result($result_mata_pelajaran);
 ?>

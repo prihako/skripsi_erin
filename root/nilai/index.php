@@ -2,7 +2,6 @@
 <?php
 
 include "../Connections/dropdown_helper.php";
-include "../Connections/GetSQLValueString.php";
 require_once('../Connections/disable_cache.php');
 
 disable_cache(true);
@@ -37,7 +36,6 @@ if(isset($_POST['agama']) && $_POST['agama'] != "0"){
     $agama = GetSQLValueString($_POST['agama'], 'int');
 }
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_index = "SELECT s.*, "
         . "p_status.param_name as status_desc, "
         . "p_agama.param_name as agama_desc, "
@@ -51,13 +49,13 @@ $query_index = "SELECT s.*, "
         . "and s.status = '5' ";
 
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
+$index = mysqli_query( $alijtihad_db, $query_limit_index) or die(mysql_error());
 
 if (isset($_GET['totalRows_index'])) {
     $totalRows_index = $_GET['totalRows_index'];
 } else {
-    $all_index = mysql_query($query_index);
-    $totalRows_index = mysql_num_rows($all_index);
+    $all_index = mysqli_query($alijtihad_db,$query_index);
+    $totalRows_index = mysqli_num_rows($all_index);
 }
 $totalPages_index = ceil($totalRows_index / $maxRows_index) - 1;
 
@@ -142,7 +140,7 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
         <tbody>
             <?php
             $no = 1;
-            while ($row_index = mysql_fetch_array($index)) {
+            while ($row_index = mysqli_fetch_array($index)) {
                 ?>
                 <tr>
                     <td><?php echo $no ?> </a></td>
@@ -160,14 +158,14 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
 									. "and pelajaran.id_mata_pelajaran = test.id_mata_pelajaran "
 									. "and siswa.id_siswa = %s ",
 									GetSQLValueString($row_index['id_siswa'], "int"));
-							$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
-							while ($row_hasil_test = mysql_fetch_array($result_hasil_test)) {
+							$result_hasil_test = mysqli_query($alijtihad_db, $query_hasil_test) or die(mysql_error());
+							while ($row_hasil_test = mysqli_fetch_array($result_hasil_test)) {
 								echo $row_hasil_test['nama_mata_pelajaran'] . " : " . $row_hasil_test['nilai'] . ", ";
 							}
 						?>&nbsp; 
 					</td>
                     <td class="action">
-						<a class="btn btn-mini" href="http://localhost/al-ijtihad/root/index.php?page=create-nilai&id_siswa=<?php echo $row_index['id_siswa']; ?>">Input</a> <a class="btn btn-mini" href="http://localhost/al-ijtihad/root/index.php?page=view-nilai&id_siswa=<?php echo $row_index['id_siswa']; ?>">View</a>
+						<a class="btn btn-mini" href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=create-nilai&id_siswa=' . $row_index['id_siswa']; ?>">Input</a> <a class="btn btn-mini" href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=view-nilai&id_siswa=' . $row_index['id_siswa']; ?>">View</a>
 					</td>
                 </tr>
     <?php 
@@ -192,5 +190,5 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
         data <?php echo ($startRow_index + 1) ?> sampai <?php echo min($startRow_index + $maxRows_index, $totalRows_index) ?> dari <?php echo $totalRows_index ?> data
     </div>
 
-<?php mysql_free_result($index);
+<?php mysqli_free_result($index);
 ?>

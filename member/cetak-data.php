@@ -1,9 +1,12 @@
-<?php require_once('../Connections/database_db.php'); ?>
-
-<?php
+<?php 
 if (!isset($_SESSION)) {
     session_start();
 }
+
+require_once('../Connections/database_db.php'); 
+require_once('../Connections/get_sql_value.php'); 
+require_once('../Connections/url_helper.php'); 
+
 $MM_authorizedUsers = "";
 $MM_donotCheckaccess = "true";
 
@@ -33,7 +36,7 @@ function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) {
     return $isValid;
 }
 
-$MM_restrictGoTo = "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php";
+$MM_restrictGoTo = get_base_url() . "/al-ijtihad/index.php";
 if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("", $MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {
     $MM_qsChar = "?";
     $MM_referrer = $_SERVER['PHP_SELF'];
@@ -47,37 +50,6 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("", $MM_authorizedUsers
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 
 $colname_test = "-1";
@@ -86,7 +58,6 @@ if (isset($_SESSION['MM_Username'])) {
 }
 
 ob_start();
-mysql_select_db($database_db, $alijtihad_db);
 $query_panggilan = "SELECT "
         . "s.*, "
         . "DATE_FORMAT(s.tanggal_lahir, '%m-%d-%Y') as tanggal_lahir_desc, "
@@ -96,24 +67,21 @@ $query_panggilan = "SELECT "
         . "on s.jenis_kelamin = p_jen_kel.param_value and p_jen_kel.column_name ='jenis_kelamin' "
         . "left join orang_tua ot on s.id_siswa = ot.id_siswa and tipe_orang_tua = '1' "
         . "WHERE username = " . GetSQLValueString($colname_test, "text");
-$panggilan = mysql_query($query_panggilan, $alijtihad_db) or die(mysql_error());
-$row_panggilan = mysql_fetch_assoc($panggilan);
-$totalRows_panggilan = mysql_num_rows($panggilan);
+$panggilan = mysqli_query($alijtihad_db, $query_panggilan);
+$row_panggilan = mysqli_fetch_assoc($panggilan);
+$totalRows_panggilan = mysqli_num_rows($panggilan);
             
-mysql_select_db($database_db, $alijtihad_db);
 $query_cetak = sprintf("SELECT * FROM siswa WHERE username = %s", GetSQLValueString($colname_test, "text"));
-$cetak = mysql_query($query_panggilan, $alijtihad_db) or die(mysql_error());
-$row_cetak = mysql_fetch_assoc($cetak);
-$totalRows_cetak = mysql_num_rows($cetak);
+$cetak = mysqli_query( $alijtihad_db, $query_panggilan);
+$row_cetak = mysqli_fetch_assoc($cetak);
+$totalRows_cetak = mysqli_num_rows($cetak);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_admin = sprintf("SELECT * FROM admin");
-$admin = mysql_query($query_admin, $alijtihad_db) or die(mysql_error());
-$row_admin = mysql_fetch_assoc($admin);
+$admin = mysqli_query($alijtihad_db, $query_admin) ;
+$row_admin = mysqli_fetch_assoc($admin);
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_waktu = "SELECT nama_test, keterangan, DATE_FORMAT(waktu_test, '%m-%d-%Y') as waktu_test FROM waktutest";
-$waktu = mysql_query($query_waktu, $alijtihad_db) or die(mysql_error());
+$waktu = mysqli_query($alijtihad_db, $query_waktu);
 
 ?>
 <?php
@@ -183,7 +151,7 @@ ob_start();
         <tr>
             <td>&nbsp;</td>
             <td width="252"> 
-                <?php while ($row_waktu = mysql_fetch_assoc($waktu)) { ?>
+                <?php while ($row_waktu = mysqli_fetch_assoc($waktu)) { ?>
                         <?php echo $row_waktu['nama_test']; ?>  : <?php echo $row_waktu['waktu_test']; ?> <br /> 
                 <?php } ?> 
             </td>
@@ -313,7 +281,7 @@ try {
     echo $e;
 }
 ?> <?php
-mysql_free_result($cetak);
+mysqli_free_result($cetak);
 
-mysql_free_result($panggilan);
+mysqli_free_result($panggilan);
 ?>

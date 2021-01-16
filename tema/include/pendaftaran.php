@@ -4,41 +4,13 @@ include "Connections/upload-foto.php";
 include "Connections/dropdown_helper.php";
 date_default_timezone_set("Asia/Jakarta");
 
-$lokasi_file = $_FILES['fupload']['tmp_name'];
-$nama_file = $_FILES['fupload']['name'];
-$nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
-?>
-<?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
+$lokasi_file;
+$nama_file;
+$nama_file_to_saved;
+if(isset($_FILES['fupload'])){
+	$lokasi_file = $_FILES['fupload']['tmp_name'];
+	$nama_file = $_FILES['fupload']['name'];
+	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
 }
 ?>
 
@@ -51,14 +23,12 @@ if (isset($_SERVER['QUERY_STRING'])) {
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
     
-    $$insertGoTo = "index.php";
+    $insertGoTo = "index.php";
     if (!empty($lokasi_file)) {
         UploadGaleri($nama_file_to_saved);
     } else {
         $nama_file = "no-image.jpg";
     }
-    
-    mysql_select_db($database_db, $alijtihad_db);
      
     $insertSQL = sprintf("INSERT INTO siswa ("
                 . "username, "
@@ -99,9 +69,9 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                 GetSQLValueString('1', "text")
                 );
 
-    $Result1 = mysql_query($insertSQL, $alijtihad_db) or die(mysql_error());
+    $Result1 = mysqli_query($alijtihad_db, $insertSQL) or die(mysqli_error($alijtihad_db));
     
-    $id_siswa = mysql_insert_id();
+    $id_siswa = mysqli_insert_id($alijtihad_db);
     
     $insertSQLBapak = sprintf("INSERT INTO orang_tua ("
                 . "nama, "
@@ -134,7 +104,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                 GetSQLValueString("1", "text")
                 );
 
-    $ResultBapak = mysql_query($insertSQLBapak, $alijtihad_db) or die(mysql_error());
+    $ResultBapak = mysqli_query($alijtihad_db, $insertSQLBapak) or die(mysqli_error($alijtihad_db));;
     
     $insertSQLIbu = sprintf("INSERT INTO orang_tua ("
                 . "nama, "
@@ -167,7 +137,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                 GetSQLValueString("2", "text")
                 );
 
-    $ResultIbu = mysql_query($insertSQLIbu, $alijtihad_db) or die(mysql_error());
+    $ResultIbu = mysqli_query($alijtihad_db, $insertSQLIbu) or die(mysqli_error($alijtihad_db));;
     
     if (!empty($lokasi_file)) {
         header(sprintf("Location: index.php?page=berhasil"));

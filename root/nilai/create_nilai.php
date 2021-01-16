@@ -1,42 +1,10 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
 
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
     $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
-
-mysql_select_db($database_db, $alijtihad_db);
 
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
 	
@@ -49,7 +17,7 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
 	if( (isset($_POST["is_hasil_test_exists"]))  && (isset($_POST["is_hasil_test_exists"]) == true) ){
 		$deleteHasilTestSQL = sprintf("delete from hasil_test where id_siswa = %s ", 
 			GetSQLValueString($_POST['id_siswa'], "int"));
-		$resultDeleteHasilTest = mysql_query($deleteHasilTestSQL, $alijtihad_db) or die(mysql_error());
+		$resultDeleteHasilTest = mysqli_query($alijtihad_db,$deleteHasilTestSQL);
 	}
 	
 	for($i = 0; $i < $indexMataPelajaran; $i++){
@@ -57,10 +25,10 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
 			GetSQLValueString($_POST['id_siswa'], "int"), 
 			GetSQLValueString($_POST['array_id_mata_pelajaran'][$i], "int"),
 			GetSQLValueString($_POST['array_nilai_ujian'][$i], "int"));
-		$Result1 = mysql_query($insertSQL, $alijtihad_db) or die(mysql_error());
+		$Result1 = mysqli_query( $alijtihad_db, $insertSQL);
 	}
 
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=input-nilai"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=input-nilai"));
 }
 
 $colname_update = "-1";
@@ -78,15 +46,15 @@ $query_update = sprintf("SELECT s.*, "
         . "left join parameter p_jen_kel on s.jenis_kelamin = p_jen_kel.param_value and p_jen_kel.column_name = 'jenis_kelamin' "
 		. "where s.id_siswa = %s ",
         GetSQLValueString($colname_update, "int"));
-$update = mysql_query($query_update, $alijtihad_db) or die(mysql_error());
-$row_update = mysql_fetch_assoc($update);
-$totalRows_update = mysql_num_rows($update);
+$update = mysqli_query($alijtihad_db, $query_update);
+$row_update = mysqli_fetch_assoc($update);
+$totalRows_update = mysqli_num_rows($update);
 
-mysql_free_result($update);
+mysqli_free_result($update);
 
 
 $query_mata_pelajaran = "SELECT * from mata_pelajaran";
-$result_mata_pelajaran = mysql_query($query_mata_pelajaran, $alijtihad_db) or die(mysql_error());
+$result_mata_pelajaran = mysqli_query( $alijtihad_db, $query_mata_pelajaran);
 
 
 $query_hasil_test = sprintf("select test.id_hasil_test, test.nilai, "
@@ -96,8 +64,8 @@ $query_hasil_test = sprintf("select test.id_hasil_test, test.nilai, "
 		. "and pelajaran.id_mata_pelajaran = test.id_mata_pelajaran "
 		. "and siswa.id_siswa = %s ",
 		GetSQLValueString($colname_update, "int"));
-$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
-$totalRows_hasil_test = mysql_num_rows($result_hasil_test);
+$result_hasil_test = mysqli_query($alijtihad_db, $query_hasil_test);
+$totalRows_hasil_test = mysqli_num_rows($result_hasil_test);
 $isHasilTestExists = false;
 if($totalRows_hasil_test > 0){
 	$isHasilTestExists = true;
@@ -143,7 +111,7 @@ if($totalRows_hasil_test > 0){
         </tr>
 <?php 
 	if($isHasilTestExists == true){
-		while ($row_hasil_test = mysql_fetch_array($result_hasil_test)) { 
+		while ($row_hasil_test = mysqli_fetch_array($result_hasil_test)) { 
 ?>
 		<tr valign="baseline">
             <td><p><?php echo htmlentities($row_hasil_test['nama_mata_pelajaran'], ENT_COMPAT, ''); ?></p></td>
@@ -154,7 +122,7 @@ if($totalRows_hasil_test > 0){
 <?php 
 		}
 	}else{
-		while ($row_mata_pelajaran = mysql_fetch_array($result_mata_pelajaran)) { 
+		while ($row_mata_pelajaran = mysqli_fetch_array($result_mata_pelajaran)) { 
 ?>
         <tr valign="baseline">
             <td><p><?php echo htmlentities($row_mata_pelajaran['nama_mata_pelajaran'], ENT_COMPAT, ''); ?></p></td>
@@ -177,5 +145,5 @@ if($totalRows_hasil_test > 0){
 </form>
 <p>&nbsp;</p>
 
-<?php mysql_free_result($result_mata_pelajaran);
+<?php mysqli_free_result($result_mata_pelajaran);
     ?>

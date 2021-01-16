@@ -1,35 +1,5 @@
+
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
@@ -39,23 +9,22 @@ if (isset($_SERVER['QUERY_STRING'])) {
 if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
     $updateSQL = sprintf("UPDATE admin SET username=%s, password=%s, nama_lengkap=%s WHERE id_admin=%s", GetSQLValueString($_POST['username'], "text"), GetSQLValueString($_POST['password'], "text"), GetSQLValueString($_POST['nama_lengkap'], "text"), GetSQLValueString($_POST['id_admin'], "int"));
 
-    mysql_select_db($database_db, $alijtihad_db);
-    $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+    mysqli_select_db($alijtihad_db, $database_db);
+    $Result1 = mysqli_query($alijtihad_db, $updateSQL);
 
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=admin"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=admin"));
 }
 
 $colname_update = "-1";
 if (isset($_GET['id_admin'])) {
     $colname_update = $_GET['id_admin'];
 }
-mysql_select_db($database_db, $alijtihad_db);
 $query_update = sprintf("SELECT * FROM admin WHERE id_admin = %s", GetSQLValueString($colname_update, "int"));
-$update = mysql_query($query_update, $alijtihad_db) or die(mysql_error());
-$row_update = mysql_fetch_assoc($update);
-$totalRows_update = mysql_num_rows($update);
+$update = mysqli_query($alijtihad_db, $query_update) or die(mysql_error());
+$row_update = mysqli_fetch_assoc($update);
+$totalRows_update = mysqli_num_rows($update);
 
-mysql_free_result($update);
+mysqli_free_result($update);
 ?>
 
 <form method="post" name="form1" action="<?php echo $editFormAction; ?>">

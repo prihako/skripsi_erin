@@ -8,11 +8,11 @@ Menu navigasi
 </div>
 <div class="menu-kiri-isi"> 
 <li><a href="index.php">Home</a></li>
-<li><a href="http://localhost/al-ijtihad/index.php?page=panduan">Panduan</a></li>
-<li><a href="http://localhost/al-ijtihad/index.php?page=pendaftaran">Registrasi</a></li>
-<li><a href="http://localhost/al-ijtihad/index.php?page=informasi">Informasi</a></li>
-<li><a href="http://localhost/al-ijtihad/index.php?page=erinabelajar">erinabelajar</a></li>
-<li><a href="http://localhost/al-ijtihad/index.php?page=data-pendaftar">Data Pendaftar</a></li>
+<li><a href="<?php echo get_base_url() . '/al-ijtihad/index.php?page=panduan'; ?>">Panduan</a></li>
+<li><a href="<?php echo get_base_url() . '/al-ijtihad/index.php?page=pendaftaran'; ?>">Registrasi</a></li>
+<li><a href="<?php echo get_base_url() . '/al-ijtihad/index.php?page=informasi'; ?>">Informasi</a></li>
+<li><a href="<?php echo get_base_url() . '/al-ijtihad/index.php?page=erinabelajar'; ?>">erinabelajar</a></li>
+<li><a href="<?php echo get_base_url() . '/al-ijtihad/index.php?page=data-pendaftar'; ?>">Data Pendaftar</a></li>
  
  </div> 
  

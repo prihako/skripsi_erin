@@ -1,35 +1,4 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
@@ -40,22 +9,22 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
     $updateSQL = sprintf("UPDATE mata_pelajaran SET nama_mata_pelajaran=%s, nilai_minimum=%s WHERE id_mata_pelajaran=%s", GetSQLValueString($_POST['nama_mata_pelajaran'], "text"), GetSQLValueString($_POST['nilai_minimum'], "int"), GetSQLValueString($_POST['id_mata_pelajaran'], "int"));
 
     mysql_select_db($database_db, $alijtihad_db);
-    $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+    $Result1 = mysqli_query( $alijtihad_db, $updateSQL);
 
-    header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=mata-pelajaran"));
+    header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=mata-pelajaran"));
 }
 
 $colname_update = "-1";
 if (isset($_GET['id_mata_pelajaran'])) {
     $colname_update = $_GET['id_mata_pelajaran'];
 }
-mysql_select_db($database_db, $alijtihad_db);
+mysqli_select_db($alijtihad_db, $database_db);
 $query_update = sprintf("SELECT * FROM mata_pelajaran WHERE id_mata_pelajaran = %s", GetSQLValueString($colname_update, "int"));
-$update = mysql_query($query_update, $alijtihad_db) or die(mysql_error());
-$row_update = mysql_fetch_assoc($update);
-$totalRows_update = mysql_num_rows($update);
+$update = mysqli_query($alijtihad_db, $query_update);
+$row_update = mysqli_fetch_assoc($update);
+$totalRows_update = mysqli_num_rows($update);
 
-mysql_free_result($update);
+mysqli_free_result($update);
 ?>
 
 <form method="post" name="form1" action="<?php echo $editFormAction; ?>">

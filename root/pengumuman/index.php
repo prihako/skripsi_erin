@@ -1,35 +1,4 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $currentPage = $_SERVER["PHP_SELF"];
 
@@ -40,17 +9,16 @@ if (isset($_GET['pageNum_halaman_utama'])) {
 }
 $startRow_halaman_utama = $pageNum_halaman_utama * $maxRows_halaman_utama;
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_halaman_utama = "SELECT * FROM pengumuman";
 $query_limit_halaman_utama = sprintf("%s LIMIT %d, %d", $query_halaman_utama, $startRow_halaman_utama, $maxRows_halaman_utama);
-$halaman_utama = mysql_query($query_limit_halaman_utama, $alijtihad_db) or die(mysql_error());
-$row_halaman_utama = mysql_fetch_assoc($halaman_utama);
+$halaman_utama = mysqli_query($alijtihad_db, $query_limit_halaman_utama);
+$row_halaman_utama = mysqli_fetch_assoc($halaman_utama);
 
 if (isset($_GET['totalRows_halaman_utama'])) {
     $totalRows_halaman_utama = $_GET['totalRows_halaman_utama'];
 } else {
-    $all_halaman_utama = mysql_query($query_halaman_utama);
-    $totalRows_halaman_utama = mysql_num_rows($all_halaman_utama);
+    $all_halaman_utama = mysqli_query($alijtihad_db, $query_halaman_utama);
+    $totalRows_halaman_utama = mysqli_num_rows($all_halaman_utama);
 }
 $totalPages_halaman_utama = ceil($totalRows_halaman_utama / $maxRows_halaman_utama) - 1;
 
@@ -78,7 +46,7 @@ $queryString_halaman_utama = sprintf("&totalRows_halaman_utama=%d%s", $totalRows
     </head>
 
     <body>
-        <a href="http://localhost/al-ijtihad/root/index.php?page=tambah-pengumuman">Tambah Pengumuman </a>
+        <a href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=tambah-pengumuman'; ?>">Tambah Pengumuman </a>
         <table border="1" width="100%">
             <tr>
                 <td>judul_pengumuman</td>
@@ -91,10 +59,10 @@ $queryString_halaman_utama = sprintf("&totalRows_halaman_utama=%d%s", $totalRows
                     <td><?php echo $row_halaman_utama['judul_pengumuman']; ?>&nbsp;</td>
                     <td><?php echo $row_halaman_utama['isi_pengumuman']; ?>&nbsp; </td>
                     <td><?php echo $row_halaman_utama['tanggal_pengumuman']; ?>&nbsp; </td>
-                    <td><p><a href="http://localhost/al-ijtihad/root/index.php?page=edit-pengumuman&id_pengumuman=<?php echo $row_halaman_utama['id_pengumuman']; ?>">edit</a></p>
+                    <td><p><a href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=edit-pengumuman&id_pengumuman=' . $row_halaman_utama['id_pengumuman']; ?>">edit</a></p>
                         <p><a href="pengumuman/delete.php?id_pengumuman=<?php echo $row_halaman_utama['id_pengumuman']; ?>">hapus</a></p></td>
                 </tr>
-<?php } while ($row_halaman_utama = mysql_fetch_assoc($halaman_utama)); ?>
+<?php } while ($row_halaman_utama = mysqli_fetch_assoc($halaman_utama)); ?>
         </table>
         <br />
 
@@ -114,5 +82,5 @@ $queryString_halaman_utama = sprintf("&totalRows_halaman_utama=%d%s", $totalRows
     </body>
 </html>
 <?php
-mysql_free_result($halaman_utama);
+mysqli_free_result($halaman_utama);
 ?>

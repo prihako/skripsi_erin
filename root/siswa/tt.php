@@ -1,6 +1,5 @@
 <?php 
 require_once('../Connections/database_db.php'); 
-include "../Connections/GetSQLValueString.php";
 ?>
 <?php
 
@@ -16,14 +15,14 @@ $startRow_index = $pageNum_index * $maxRows_index;
 mysql_select_db($database_db, $alijtihad_db);
 $query_index = "SELECT * FROM siswa WHERE siswa.status=$_POST[status]";
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
-$row_index = mysql_fetch_assoc($index);
+$index = mysqli_query($alijtihad_db, $query_limit_index) ;
+$row_index = mysqli_fetch_assoc($index);
 
 if (isset($_GET['totalRows_index'])) {
     $totalRows_index = $_GET['totalRows_index'];
 } else {
-    $all_index = mysql_query($query_index);
-    $totalRows_index = mysql_num_rows($all_index);
+    $all_index = mysql_query($alijtihad_db, $query_index);
+    $totalRows_index = mysqli_num_rows($all_index);
 }
 $totalPages_index = ceil($totalRows_index / $maxRows_index) - 1;
 
@@ -151,8 +150,8 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
                             ?></td>
                         <!-- sembunyikan ketika dalam mode print -->
                         <td class="action">
-                            <a href="http://localhost/al-ijtihad/root/index.php?page=edit-siswa&username=<?php echo $row_index['username']; ?>" class="btn btn-mini">Ubah</a>
-                            <a href="http://localhost/al-ijtihad/root/index.php?page=hapus-siswa&id_siswa=<?php echo $row_index['id_siswa']; ?>" class="btn btn-mini">Hapus</a>
+                            <a href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=edit-siswa&username=' . $row_index['username']; ?>" class="btn btn-mini">Ubah</a>
+							<a href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=hapus-siswa&id_siswa=' . $row_index['id_siswa']; ?>" class="btn btn-mini">Hapus</a>
                         </td>
                     </tr>
         <?php $no++;
@@ -170,5 +169,5 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
 </body>
 </html>
 <?php
-mysql_free_result($index);
+mysqli_free_result($index);
 ?>

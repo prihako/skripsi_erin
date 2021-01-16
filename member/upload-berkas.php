@@ -1,45 +1,12 @@
 <?php
 include "Connections/upload-foto.php";
+
 date_default_timezone_set("Asia/Jakarta");
 
 ?>
 <?php
 
 disable_cache(true);
-
-mysql_select_db($database_db, $alijtihad_db);
-
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 function is_already_upload_document($username, $documentType){
     global $alijtihad_db;
@@ -48,8 +15,8 @@ function is_already_upload_document($username, $documentType){
         . "where s.username = %s and d.document_type = %s",
         GetSQLValueString($username, "text"),
         GetSQLValueString($documentType, "text"));
-    $resultSelect = mysql_query($queryIsAlreadyUploadDoc, $alijtihad_db) or die(mysql_error());
-    $totalRow = mysql_num_rows($resultSelect);
+    $resultSelect = mysqli_query($alijtihad_db, $queryIsAlreadyUploadDoc);
+    $totalRow = mysqli_num_rows($resultSelect);
     
     return $totalRow;
 }
@@ -67,12 +34,17 @@ function insert_into_document($document_type, $file_name, $id_siswa){
                 GetSQLValueString($file_name, "text"),
                 GetSQLValueString($id_siswa, "int"));
 
-    mysql_query($insertSQL, $alijtihad_db) or die(mysql_error());
+    mysqli_query($alijtihad_db, $insertSQL);
 }
 
 $colname_test = "-1";
 if (isset($_SESSION['MM_Username'])) {
     $colname_test = $_SESSION['MM_Username'];
+}
+
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+    $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
 
 if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
@@ -154,9 +126,9 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
             . "and s.username = %s",
             GetSQLValueString($colname_test, "text"));
 
-    $totalRowDocSQLResult= mysql_query($totalRowDocSQL, $alijtihad_db) or die(mysql_error());
+    $totalRowDocSQLResult= mysqli_query($alijtihad_db, $totalRowDocSQL);
     
-    $totalRowDoc = mysql_num_rows($totalRowDocSQLResult);
+    $totalRowDoc = mysqli_num_rows($totalRowDocSQLResult);
     
     if($totalRowDoc >= 5){
         $updateSQLSiswa = sprintf("UPDATE SISWA "
@@ -165,7 +137,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
              GetSQLValueString('4', "text"),
              GetSQLValueString($_POST['id_siswa'], "text"));
     
-        $resultUpdateSiswa= mysql_query($updateSQLSiswa, $alijtihad_db) or die(mysql_error());
+        $resultUpdateSiswa= mysqli_query($alijtihad_db, $updateSQLSiswa);
     }else{
         log_to_file_v2("total doc already uploaded " . $totalRowDoc, basename(__FILE__), __LINE__);
     }
@@ -193,9 +165,9 @@ $query_test = sprintf("SELECT "
         . "left join orang_tua ot2 "
         . "on s.id_siswa = ot2.id_siswa and ot2.tipe_orang_tua = '2' "
         . "where s.username =%s ", GetSQLValueString($colname_test, "text"));
-$test = mysql_query($query_test, $alijtihad_db) or die(mysql_error());
-$row_test = mysql_fetch_assoc($test);
-$totalRows_test = mysql_num_rows($test);
+$test = mysqli_query($alijtihad_db, $query_test);
+$row_test = mysqli_fetch_assoc($test);
+$totalRows_test = mysqli_num_rows($test);
 
 $is_already_upload_ijazah = is_already_upload_document($colname_test, '2');
 $is_already_upload_skhun = is_already_upload_document($colname_test, '3');
@@ -321,5 +293,5 @@ $is_already_upload_ktp_ibu = is_already_upload_document($colname_test, '6');
 
 </div>
 <?php
-mysql_free_result($test);
+mysqli_free_result($test);
 ?>

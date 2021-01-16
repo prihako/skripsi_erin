@@ -1,35 +1,4 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
@@ -40,7 +9,7 @@ $colname_update = "-1";
 if (isset($_GET['id_siswa'])) {
     $colname_update = $_GET['id_siswa'];
 }
-mysql_select_db($database_db, $alijtihad_db);
+
 $query_update = sprintf("SELECT s.*, "
         . "p_status.param_name as status_desc, "
         . "p_agama.param_name as agama_desc, "
@@ -51,11 +20,11 @@ $query_update = sprintf("SELECT s.*, "
         . "left join parameter p_jen_kel on s.jenis_kelamin = p_jen_kel.param_value and p_jen_kel.column_name = 'jenis_kelamin' "
 		. "where s.id_siswa = %s ",
         GetSQLValueString($colname_update, "int"));
-$update = mysql_query($query_update, $alijtihad_db) or die(mysql_error());
-$row_update = mysql_fetch_assoc($update);
-$totalRows_update = mysql_num_rows($update);
+$update = mysqli_query($alijtihad_db, $query_update);
+$row_update = mysqli_fetch_assoc($update);
+$totalRows_update = mysqli_num_rows($update);
 
-mysql_free_result($update);
+mysqli_free_result($update);
 
 
 $query_hasil_test = sprintf("select test.id_hasil_test, test.nilai, "
@@ -65,7 +34,7 @@ $query_hasil_test = sprintf("select test.id_hasil_test, test.nilai, "
 		. "and pelajaran.id_mata_pelajaran = test.id_mata_pelajaran "
 		. "and siswa.id_siswa = %s ",
 		GetSQLValueString($colname_update, "int"));
-$result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_error());
+$result_hasil_test = mysqli_query($alijtihad_db, $query_hasil_test);
 
 ?>
 
@@ -105,18 +74,18 @@ $result_hasil_test = mysql_query($query_hasil_test, $alijtihad_db) or die(mysql_
             <td nowrap >Mata Pelajaran</td>
 			<td nowrap >Nilai</td>
         </tr>
-<?php while ($row_mata_pelajaran = mysql_fetch_array($result_hasil_test)) { ?>
+<?php while ($row_mata_pelajaran = mysqli_fetch_array($result_hasil_test)) { ?>
         <tr valign="baseline">
             <td><p><?php echo htmlentities($row_mata_pelajaran['nama_mata_pelajaran'], ENT_COMPAT, ''); ?></p></td>
             <td><p><?php echo htmlentities($row_mata_pelajaran['nilai'], ENT_COMPAT, ''); ?></p> </td>
         </tr>
 <?php } ?>
 		<tr valign="baseline">
-            <td colspan="2"><a href="http://localhost/al-ijtihad/root/index.php?page=input-nilai">Back</a></td>
+            <td colspan="2"><a href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=input-nilai'; ?>">Back</a></td>
         </tr>
     </table>
 </form>
 <p>&nbsp;</p>
 
-<?php mysql_free_result($result_hasil_test);
+<?php mysqli_free_result($result_hasil_test);
     ?>

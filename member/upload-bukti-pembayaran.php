@@ -1,48 +1,25 @@
 <?php
 include "Connections/upload-foto.php";
+
 date_default_timezone_set("Asia/Jakarta");
 
-$lokasi_file = $_FILES['fupload']['tmp_name'];
-$nama_file = $_FILES['fupload']['name'];
-$nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+$lokasi_file;
+$nama_file;
+$nama_file_to_saved;
+if (isset($_FILES['fupload'])){
+	$lokasi_file = $_FILES['fupload']['tmp_name'];
+	$nama_file = $_FILES['fupload']['name'];
+	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+}
 ?>
 <?php
 
 disable_cache(true);
 
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+    $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
-
-mysql_select_db($database_db, $alijtihad_db);
 
 if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
 
@@ -62,7 +39,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
             GetSQLValueString($nama_file_to_saved, "text"),
             GetSQLValueString($_POST['id_siswa'], "text"));
     
-    $resultInsertDocument = mysql_query($insertSQL, $alijtihad_db) or die(mysql_error());
+    $resultInsertDocument = mysqli_query($alijtihad_db, $insertSQL) or die(mysqli_error($alijtihad_db));
     
     $updateSQLSiswa = sprintf("UPDATE SISWA "
             . "SET STATUS = %s "
@@ -70,7 +47,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
              GetSQLValueString('2', "text"),
              GetSQLValueString($_POST['id_siswa'], "text"));
     
-    $resultUpdateSiswa= mysql_query($updateSQLSiswa, $alijtihad_db) or die(mysql_error());
+    $resultUpdateSiswa= mysqli_query($alijtihad_db, $updateSQLSiswa) or die(mysqli_error($alijtihad_db));
 }
 
 $colname_test = "-1";
@@ -100,9 +77,9 @@ $query_test = sprintf("SELECT "
         . "left join orang_tua ot2 "
         . "on s.id_siswa = ot2.id_siswa and ot2.tipe_orang_tua = '2' "
         . "where s.username =%s ", GetSQLValueString($colname_test, "text"));
-$test = mysql_query($query_test, $alijtihad_db) or die(mysql_error());
-$row_test = mysql_fetch_assoc($test);
-$totalRows_test = mysql_num_rows($test);
+$test = mysqli_query($alijtihad_db, $query_test) or die(mysql_error());
+$row_test = mysqli_fetch_assoc($test);
+$totalRows_test = mysqli_num_rows($test);
 
 ?>
 <div class="isi">
@@ -163,5 +140,5 @@ $totalRows_test = mysql_num_rows($test);
 
 </div>
 <?php
-mysql_free_result($test);
+mysqli_free_result($test);
 ?>

@@ -2,7 +2,6 @@
 <?php
 
 include "../Connections/dropdown_helper.php";
-include "../Connections/GetSQLValueString.php";
 require_once('../Connections/disable_cache.php');
 
 disable_cache(true);
@@ -42,7 +41,6 @@ if(isset($_POST['status']) && $_POST['status'] != "0"){
     $status = GetSQLValueString($_POST['status'], 'int');
 }
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_index = "SELECT s.*, "
         . "p_status.param_name as status_desc, "
         . "p_agama.param_name as agama_desc, "
@@ -56,14 +54,14 @@ $query_index = "SELECT s.*, "
         . "and s.status like '%" . $status . "%' ";
 
 $query_limit_index = sprintf("%s LIMIT %d, %d", $query_index, $startRow_index, $maxRows_index);
-$index = mysql_query($query_limit_index, $alijtihad_db) or die(mysql_error());
-$row_index = mysql_fetch_assoc($index);
+$index = mysqli_query($alijtihad_db, $query_limit_index);
+$row_index = mysqli_fetch_assoc($index);
 
 if (isset($_GET['totalRows_index'])) {
     $totalRows_index = $_GET['totalRows_index'];
 } else {
-    $all_index = mysql_query($query_index);
-    $totalRows_index = mysql_num_rows($all_index);
+    $all_index = mysqli_query($alijtihad_db,$query_index);
+    $totalRows_index = mysqli_num_rows($all_index);
 }
 $totalPages_index = ceil($totalRows_index / $maxRows_index) - 1;
 
@@ -175,10 +173,10 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
                     <td><?php echo $row_index['alamat_siswa']; ?>&nbsp; </td>
                     <td><?php echo $row_index['NO_INDUK']; ?>&nbsp; </td>
                     <td><?php echo $row_index['status_desc']; ?>&nbsp; </td>
-                    <td class="action"><a  class="btn btn-mini" href="http://localhost/al-ijtihad/root/index.php?page=edit-siswa&username=<?php echo $row_index['username']; ?>">Edit</a> <a class="btn btn-mini" href="http://localhost/al-ijtihad/root/index.php?page=hapus-siswa&id_siswa=<?php echo $row_index['id_siswa']; ?>">Hapus</a></td>
+                    <td class="action"><a  class="btn btn-mini" href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=edit-siswa&username=' . $row_index['username']; ?>">Edit</a> <a class="btn btn-mini" href="<?php echo get_base_url() . '/al-ijtihad/root/index.php?page=hapus-siswa&id_siswa=' . $row_index['id_siswa']; ?>">Hapus</a></td>
                 </tr>
     <?php $no++;
-} while ($row_index = mysql_fetch_assoc($index)); ?>
+} while ($row_index = mysqli_fetch_assoc($index)); ?>
         </tbody>
     </table>
 
@@ -197,5 +195,5 @@ $queryString_index = sprintf("&totalRows_index=%d%s", $totalRows_index, $querySt
         data <?php echo ($startRow_index + 1) ?> sampai <?php echo min($startRow_index + $maxRows_index, $totalRows_index) ?> dari <?php echo $totalRows_index ?> data
     </div>
 
-<?php mysql_free_result($index);
+<?php mysqli_free_result($index);
 ?>

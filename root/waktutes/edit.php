@@ -1,34 +1,4 @@
 <?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
@@ -42,21 +12,19 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
                        GetSQLValueString($_POST['waktu_test'], "date"),
                        GetSQLValueString($_POST['id_waktutes'], "int"));
 
-  mysql_select_db($database_db, $alijtihad_db);
-  $Result1 = mysql_query($updateSQL, $alijtihad_db) or die(mysql_error());
+  $Result1 = mysqli_query( $alijtihad_db, $updateSQL) or die(mysql_error());
 
-  header(sprintf("Location: " . "http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/root/index.php?page=waktutes"));
+  header(sprintf("Location: " . get_base_url() . "/al-ijtihad/root/index.php?page=waktutes"));
 }
 
 $colname_edit = "-1";
 if (isset($_GET['id_waktutes'])) {
   $colname_edit = $_GET['id_waktutes'];
 }
-mysql_select_db($database_db, $alijtihad_db);
 $query_edit = sprintf("SELECT * FROM waktutest WHERE id_waktutes = %s", GetSQLValueString($colname_edit, "int"));
-$edit = mysql_query($query_edit, $alijtihad_db) or die(mysql_error());
-$row_edit = mysql_fetch_assoc($edit);
-$totalRows_edit = mysql_num_rows($edit);
+$edit = mysqli_query($alijtihad_db, $query_edit) ;
+$row_edit = mysqli_fetch_assoc($edit);
+$totalRows_edit = mysqli_num_rows($edit);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,5 +64,5 @@ $totalRows_edit = mysql_num_rows($edit);
 </body>
 </html>
 <?php
-mysql_free_result($edit);
+mysqli_free_result($edit);
 ?>

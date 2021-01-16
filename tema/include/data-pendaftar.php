@@ -1,36 +1,5 @@
 
 <?php
-if (!function_exists("GetSQLValueString")) {
-
-    function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") {
-        if (PHP_VERSION < 6) {
-            $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-        }
-
-        $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-        switch ($theType) {
-            case "text":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "long":
-            case "int":
-                $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-                break;
-            case "double":
-                $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-                break;
-            case "date":
-                $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-                break;
-            case "defined":
-                $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-                break;
-        }
-        return $theValue;
-    }
-
-}
 
 $currentPage = $_SERVER["PHP_SELF"];
 
@@ -41,7 +10,6 @@ if (isset($_GET['pageNum_halaman_daftar'])) {
 }
 $startRow_halaman_daftar = $pageNum_halaman_daftar * $maxRows_halaman_daftar;
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_halaman_daftar = "SELECT "
         . "s.nama_lengkap, "
         . "s.tempat_lahir, "
@@ -57,14 +25,14 @@ $query_halaman_daftar = "SELECT "
         . "left join orang_tua ot2 "
         . "on s.id_siswa = ot2.id_siswa and ot2.tipe_orang_tua = '2'";
 $query_limit_halaman_daftar = sprintf("%s LIMIT %d, %d", $query_halaman_daftar, $startRow_halaman_daftar, $maxRows_halaman_daftar);
-$halaman_daftar = mysql_query($query_limit_halaman_daftar, $alijtihad_db) or die(mysql_error());
-$row_halaman_daftar = mysql_fetch_assoc($halaman_daftar);
+$halaman_daftar = mysqli_query($alijtihad_db, $query_limit_halaman_daftar);
+$row_halaman_daftar = mysqli_fetch_assoc($halaman_daftar);
 
 if (isset($_GET['totalRows_halaman_daftar'])) {
     $totalRows_halaman_daftar = $_GET['totalRows_halaman_daftar'];
 } else {
-    $all_halaman_daftar = mysql_query($query_halaman_daftar);
-    $totalRows_halaman_daftar = mysql_num_rows($all_halaman_daftar);
+    $all_halaman_daftar = mysqli_query($alijtihad_db, $query_halaman_daftar);
+    $totalRows_halaman_daftar = mysqli_num_rows($all_halaman_daftar);
 }
 $totalPages_halaman_daftar = ceil($totalRows_halaman_daftar / $maxRows_halaman_daftar) - 1;
 
@@ -113,7 +81,7 @@ do { ?>
                     <td style="text-transform:uppercase" <?php $status = $row_halaman_daftar['status']; $classToPrint = ($status != 5) ? ("class='menunggu'") : ("class='diterima'"); echo $classToPrint ?> ><?php echo $row_halaman_daftar['status']; ?></td>
                 </tr>
     <?php $nomor++;
-} while ($row_halaman_daftar = mysql_fetch_assoc($halaman_daftar)); ?>
+} while ($row_halaman_daftar = mysqli_fetch_assoc($halaman_daftar)); ?>
         </table>
 
     </div>
@@ -136,5 +104,5 @@ do { ?>
 </div>
 </div> <!--penutup container-->
 <?php
-mysql_free_result($halaman_daftar);
+mysqli_free_result($halaman_daftar);
 ?>

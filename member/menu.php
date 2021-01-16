@@ -1,10 +1,10 @@
 <?php
-include "Connections/database_db.php";
-
 //initialize the session
 if (!isset($_SESSION)) {
     session_start();
 }
+
+include "Connections/database_db.php";
 
 // ** Logout the current user. **
 $logoutAction = $_SERVER['PHP_SELF'] . "?doLogout=true";
@@ -28,10 +28,9 @@ if ((isset($_GET['doLogout'])) && ($_GET['doLogout'] == "true")) {
     }
 }
 
-mysql_select_db($database_db, $alijtihad_db);
 $query_cetak = sprintf("SELECT * FROM siswa WHERE username = %s", GetSQLValueString($_SESSION['MM_Username'], "text"));
-$cetak = mysql_query($query_cetak, $alijtihad_db) or die(mysql_error());
-$row_cetak = mysql_fetch_assoc($cetak);
+$cetak = mysqli_query($alijtihad_db, $query_cetak);
+$row_cetak = mysqli_fetch_assoc($cetak);
 
 ?>
 <!--BAGIAN MENU KIRI-->
@@ -42,13 +41,13 @@ $row_cetak = mysql_fetch_assoc($cetak);
         </div>
         <div class="menu-kiri-isi"> 
             <li><a href="index.php?page=siswa">Home</a></li>
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=detail-siswa'>Detail Pendaftar</a>"; ?></li> 
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=upload-pembayaran'>Upload Pembayaran</a>"; ?></li> 
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=upload-berkas'>Upload Berkas</a>"; ?></li>  
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=detail-siswa>Detail Pendaftar</a>"; ?></li> 
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=upload-pembayaran>Upload Pembayaran</a>"; ?></li> 
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=upload-berkas>Upload Berkas</a>"; ?></li>  
             <li>
                 <?php 
                 if($row_cetak['status'] == '5'){
-                    echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/member/cetak-data.php'>Cetak Kartu Ujian</a>"; 
+                    echo "<a href=" . get_base_url() . "/al-ijtihad/member/cetak-data.php>Cetak Kartu Ujian</a>"; 
                 }else{
                      echo "<font color='red'>Cetak Kartu Ujian</font>";
                 }
@@ -60,9 +59,9 @@ $row_cetak = mysql_fetch_assoc($cetak);
         </div>
 
         <div class="menu-kiri-isi">
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=panduan'>Panduan</a>"; ?></li>  
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=informasi'>Informasi</a>"; ?></li>  
-            <li><?php echo "<a href='http://" . $_SERVER['SERVER_NAME'] . "/al-ijtihad/index.php?page=data-pendaftar'>Data Pendaftar</a>"; ?></li>  
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=panduan>Panduan</a>"; ?></li>  
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=informasi>Informasi</a>"; ?></li>  
+            <li><?php echo "<a href=" . get_base_url() . "/al-ijtihad/index.php?page=data-pendaftar>Data Pendaftar</a>"; ?></li>  
         </div>
 
         <div class="clear">
