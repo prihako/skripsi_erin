@@ -24,7 +24,7 @@ function is_already_upload_document($username, $documentType){
 function insert_into_document($document_type, $file_name, $id_siswa){
     global $alijtihad_db;
     
-    $insertSQL = sprintf("INSERT INTO DOCUMENT ("
+    $insertSQL = sprintf("INSERT INTO document ("
                 . "DOCUMENT_TYPE, "
                 . "DOCUMENT_NAME, "
                 . "ID_SISWA) "
@@ -52,7 +52,8 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     if (isset($_POST['btnUploadIjazah'])) {
         $lokasi_file = $_FILES['ijazah']['tmp_name'];
         $nama_file = $_FILES['ijazah']['name'];
-        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+		$nama_file = preg_replace('/\s+/', '_', $nama_file);
+        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . $nama_file ;
        
         if (!empty($lokasi_file)) {
             UploadGaleriV2($nama_file_to_saved, 'ijazah');
@@ -66,7 +67,8 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     if (isset($_POST['btnUploadSKHUN'])) {
         $lokasi_file = $_FILES['skhun']['tmp_name'];
         $nama_file = $_FILES['skhun']['name'];
-        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+		$nama_file = preg_replace('/\s+/', '_', $nama_file);
+        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . $nama_file ;
        
         if (!empty($lokasi_file)) {
             UploadGaleriV2($nama_file_to_saved, 'skhun');
@@ -80,7 +82,8 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     if (isset($_POST['btnUploadAkta'])) {
         $lokasi_file = $_FILES['akta_kel']['tmp_name'];
         $nama_file = $_FILES['akta_kel']['name'];
-        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+		$nama_file = preg_replace('/\s+/', '_', $nama_file);
+        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . $nama_file ;
        
         if (!empty($lokasi_file)) {
             UploadGaleriV2($nama_file_to_saved, 'akta_kel');
@@ -94,7 +97,8 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     if (isset($_POST['btnKtpBapak'])) {
         $lokasi_file = $_FILES['ktp_bapak']['tmp_name'];
         $nama_file = $_FILES['ktp_bapak']['name'];
-        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+		$nama_file = preg_replace('/\s+/', '_', $nama_file);
+        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . $nama_file ;
        
         if (!empty($lokasi_file)) {
             UploadGaleriV2($nama_file_to_saved, 'ktp_bapak');
@@ -108,7 +112,8 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     if (isset($_POST['btnKtpIbu'])) {
         $lokasi_file = $_FILES['ktp_ibu']['tmp_name'];
         $nama_file = $_FILES['ktp_ibu']['name'];
-        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+		$nama_file = preg_replace('/\s+/', '_', $nama_file);
+        $nama_file_to_saved = date("dmY_h_i_s_A", mktime()) . "_" . $nama_file ;
        
         if (!empty($lokasi_file)) {
             UploadGaleriV2($nama_file_to_saved, 'ktp_ibu');
@@ -131,7 +136,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     $totalRowDoc = mysqli_num_rows($totalRowDocSQLResult);
     
     if($totalRowDoc >= 5){
-        $updateSQLSiswa = sprintf("UPDATE SISWA "
+        $updateSQLSiswa = sprintf("UPDATE siswa "
             . "SET STATUS = %s "
             . "WHERE ID_SISWA = %s",
              GetSQLValueString('4', "text"),

@@ -10,7 +10,8 @@ $nama_file_to_saved;
 if(isset($_FILES['fupload'])){
 	$lokasi_file = $_FILES['fupload']['tmp_name'];
 	$nama_file = $_FILES['fupload']['name'];
-	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+	$nama_file = preg_replace('/\s+/', '_', $nama_file);
+	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . $nama_file ;
 }
 ?>
 
@@ -152,45 +153,6 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
 }
 ?>
 
-<!--BAGIAN ISI-->
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>jQuery UI Datepicker - Default functionality</title>
-        <link rel="stylesheet" href="member/jquery-ui.css">
-        <script src="member/jquery-1.10.2.js"></script>
-        <script src="member/jquery-ui.js"></script>
-        <script>
-            $(function () {
-                $("#tanggal-lahir").datepicker({
-                    dateFormat: 'yy-mm-dd',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: "-100:+0"
-                });
-                $("#tanggal_masuk").datepicker({
-                    dateFormat: 'yy-mm-dd',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: "-100:+0"
-                });
-                $("#tanggal_lahir_bapak").datepicker({
-                    dateFormat: 'yy-mm-dd',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: "-100:+0"
-                });
-                $("#tanggal_lahir_ibu").datepicker({
-                    dateFormat: 'yy-mm-dd',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: "-100:+0"
-                });
-            });
-        </script>
-    </head>
-
 
     <div class="isi">
         <div class="judul-web">
@@ -201,16 +163,16 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                 <div class="input-identitas">
                     <div class="input-label">
                         NISN:
-                        <label for="nama"></label>
+                        <label for="username"></label>
                     </div>  
-                    <input type="text" name="username" id="nama" class="input-daftar" maxlength="10" required>
+                    <input type="text" name="username" id="username" class="input-daftar" maxlength="10" required>
                 </div><div class="clear"></div>
                 <div class="input-identitas">
                     <div class="input-label">
                         Password:
-                        <label for="nama"></label>
+                        <label for="password"></label>
                     </div>  
-                    <input type="text" name="password" id="nama" class="input-daftar" required>
+                    <input type="text" name="password" id="password" class="input-daftar" required>
                 </div><div class="clear"></div>
 
                 <div class="judul-web">
@@ -222,9 +184,9 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                     <div class="input-identitas">
                         <div class="input-label">
                             Nama :
-                            <label for="nama"></label>
+                            <label for="nama_lengkap"></label>
                         </div>  
-                        <input type="text" name="nama_lengkap" id="nama" class="input-daftar" required>
+                        <input type="text" name="nama_lengkap" id="nama_lengkap" class="input-daftar" required>
                     </div><div class="clear"></div>
                     <div class="input-identitas">
                         <div class="input-label">
@@ -563,3 +525,32 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                 </div> <!--PENUTUP ISI-->
             </div>
     </div>
+	
+	<script>
+		$(function () {
+			$("#tanggal-lahir").datepicker({
+				dateFormat: 'yy-mm-dd',
+				changeMonth: true,
+				changeYear: true,
+				yearRange: "-100:+0"
+			});
+			$("#tanggal_masuk").datepicker({
+				dateFormat: 'yy-mm-dd',
+				changeMonth: true,
+				changeYear: true,
+				yearRange: "-100:+0"
+			});
+			$("#tanggal_lahir_bapak").datepicker({
+				dateFormat: 'yy-mm-dd',
+				changeMonth: true,
+				changeYear: true,
+				yearRange: "-100:+0"
+			});
+			$("#tanggal_lahir_ibu").datepicker({
+				dateFormat: 'yy-mm-dd',
+				changeMonth: true,
+				changeYear: true,
+				yearRange: "-100:+0"
+			});
+		});
+	</script>

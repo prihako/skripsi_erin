@@ -9,8 +9,8 @@
      
     <!-- ss yang digunakan tampilkan ketika dalam mode print -->
     <link href="print.css" rel="stylesheet" media="print">
-    <script src="jquery-1.8.3.min.js"></script>
-    <script src="jquery.PrintArea.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PrintArea/2.2.2/jquery.PrintArea.min.js"></script>
     <script>
         (function($) {
             // fungsi dijalankan setelah seluruh dokumen ditampilkan

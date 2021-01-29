@@ -1,7 +1,4 @@
 <!--bagian slider-->
-<script src="member/jquery-1.10.2.js"></script>
-<script src="member/responsiveslides.js"></script>
-<link rel="stylesheet" href="member/responsiveslides.css">
 <script>
   $(function() {
     $(".rslides").responsiveSlides();

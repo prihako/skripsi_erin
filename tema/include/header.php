@@ -7,4 +7,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>PSB Online SMK Al-Ijtihad Tangerang</title>
 <link href="tema/style.css" rel="stylesheet" type="text/css" media="all" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/ResponsiveSlides.js/1.55/responsiveslides.min.css" rel="stylesheet" type="text/css" media="all" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ResponsiveSlides.js/1.55/responsiveslides.min.js"></script>
 </head>

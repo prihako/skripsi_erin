@@ -9,7 +9,8 @@ $nama_file_to_saved;
 if (isset($_FILES['fupload'])){
 	$lokasi_file = $_FILES['fupload']['tmp_name'];
 	$nama_file = $_FILES['fupload']['name'];
-	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . (round(microtime(true) * 1000)). "_" . $nama_file ;
+	$nama_file = preg_replace('/\s+/', '_', $nama_file);
+	$nama_file_to_saved = date("dmY_h_i_s_A", time()) . "_" . $nama_file ;
 }
 ?>
 <?php
@@ -29,7 +30,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
         $nama_file = "no-image.jpg";
     }
     
-    $insertSQL = sprintf("INSERT INTO DOCUMENT ("
+    $insertSQL = sprintf("INSERT INTO document ("
             . "DOCUMENT_TYPE, "
             . "DOCUMENT_NAME, "
             . "ID_SISWA) "
@@ -41,7 +42,7 @@ if ((isset($_POST["MM_upload"])) && ($_POST["MM_upload"] == "form1")) {
     
     $resultInsertDocument = mysqli_query($alijtihad_db, $insertSQL) or die(mysqli_error($alijtihad_db));
     
-    $updateSQLSiswa = sprintf("UPDATE SISWA "
+    $updateSQLSiswa = sprintf("UPDATE siswa "
             . "SET STATUS = %s "
             . "WHERE ID_SISWA = %s",
              GetSQLValueString('2', "text"),
